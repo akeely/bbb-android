@@ -1,6 +1,15 @@
 <resources>
-    <string name="app_name">BBB</string>
+    <string name="app_name">Boys Boys Boys</string>
     <string name="action_settings">Settings</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
+    <string-array name="boys_members">
+        <item>Culla</item>
+        <item>Derek</item>
+        <item>Eric</item>
+        <item>Jake</item>
+        <item>Keely</item>
+        <item>Messy</item>
+        <item>Roy</item>
+    </string-array>
 </resources>
