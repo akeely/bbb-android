@@ -3,6 +3,8 @@
     <string name="action_settings">Settings</string>
     <string name="edit_message">Enter a message</string>
     <string name="button_send">Send</string>
+    <string name="boys_selector_prompt">Who\'s here?</string>
+    <string name="create_trip_button">Start Gambling!</string>
     <string-array name="boys_members">
         <item>Culla</item>
         <item>Derek</item>
