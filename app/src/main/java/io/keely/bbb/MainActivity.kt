@@ -1,20 +1,23 @@
 package io.keely.bbb
 
+import android.content.Context
 import android.content.Intent
+import android.os.AsyncTask
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.EditText
+import android.widget.ArrayAdapter
+import com.amazonaws.mobileconnectors.apigateway.ApiClientFactory
+import io.keely.bbb.client.android.BBBClient
+import io.keely.bbb.client.android.model.Trips
+import kotlinx.android.synthetic.main.content_main.*
 
 
 class MainActivity : AppCompatActivity() {
-
-    val EXTRA_MESSAGE = "io.keely.bbb.MESSAGE"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         fab.setOnClickListener { view ->
             createNewTrip(view)
         }
+
+        getTrips("fakeGroup")
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -48,15 +53,34 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun sendMessage(view: View) {
-        val intent = Intent(this, DisplayMessageActivity::class.java)
-        val editText = findViewById(R.id.edit_message) as EditText
-        val message = editText.text.toString()
-        intent.putExtra(EXTRA_MESSAGE, message)
-        startActivity(intent)
-    }
-
     fun createNewTrip(view: View) {
         startActivity(Intent(this, NewTripActivity::class.java))
+    }
+
+    fun getTrips(group: String) {
+
+        GetTripsTask().execute(group)
+    }
+
+    fun getContext(): Context {
+        return this
+    }
+
+    inner class GetTripsTask : AsyncTask<String, Void, Trips>() {
+
+        val factory = ApiClientFactory()
+        val client: BBBClient = factory.build<BBBClient>(BBBClient::class.java)
+
+        override fun doInBackground(vararg params: String?): Trips {
+            return client.groupTripGet(params.first())
+        }
+
+        override fun onPostExecute(result: Trips?) {
+
+            val rows = result?.map { t -> "${t.date}: ${t.totalWon}" }
+            val adapter = ArrayAdapter(getContext(), R.layout.existing_trip_row, rows)
+            existingTripsListView.adapter = adapter
+            getTripsProgress.visibility = R.id.none
+        }
     }
 }
